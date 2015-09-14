@@ -12,6 +12,7 @@ public class About extends Fragment {
 
     public About(){
 
+
     }
 
     @Override
