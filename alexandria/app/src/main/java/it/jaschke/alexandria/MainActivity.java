@@ -1,5 +1,6 @@
 package it.jaschke.alexandria;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,30 +13,34 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import it.jaschke.alexandria.api.Callback;
 
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback {
 
+    public static final String MESSAGE_EVENT = "MESSAGE_EVENT";
+    public static final String MESSAGE_KEY = "MESSAGE_EXTRA";
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String ADDBOOKFRAGMENT_TAG = "ABTAG";
+    public static boolean IS_TABLET = false;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment navigationDrawerFragment;
-
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence title;
-    public static boolean IS_TABLET = false;
     private BroadcastReceiver messageReciever;
-
-    public static final String MESSAGE_EVENT = "MESSAGE_EVENT";
-    public static final String MESSAGE_KEY = "MESSAGE_EXTRA";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,16 +156,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     }
 
-    private class MessageReciever extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.getStringExtra(MESSAGE_KEY)!=null){
-                Toast.makeText(MainActivity.this, intent.getStringExtra(MESSAGE_KEY), Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    public void goBack(View view){
+    public void goBack(View view) {
         getSupportFragmentManager().popBackStack();
     }
 
@@ -172,11 +168,44 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     @Override
     public void onBackPressed() {
-        if(getSupportFragmentManager().getBackStackEntryCount()<2){
+        if (getSupportFragmentManager().getBackStackEntryCount() < 2) {
             finish();
         }
         super.onBackPressed();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        switch (requestCode) {
+            case IntentIntegrator.REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    // Parsing bar code reader result
+                    IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+                    if (result != null) {
+                        Log.e(LOG_TAG, result.getContents());
+                        Bundle arguments = new Bundle();
+                        arguments.putString(AddBook.EAN_CONTENT, result.getContents());
+                        AddBook fragment = new AddBook();
+                        fragment.setArguments(arguments);
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.container, fragment, ADDBOOKFRAGMENT_TAG)
+                                .addToBackStack((String) title)
+                                .commit();
+                    }
+                }
+                break;
+        }
+    }
+
+    private class MessageReciever extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getStringExtra(MESSAGE_KEY) != null) {
+                Toast.makeText(MainActivity.this, intent.getStringExtra(MESSAGE_KEY), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
 }

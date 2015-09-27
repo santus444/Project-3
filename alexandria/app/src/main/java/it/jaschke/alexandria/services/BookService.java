@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 import it.jaschke.alexandria.MainActivity;
 import it.jaschke.alexandria.R;
@@ -31,12 +32,10 @@ import it.jaschke.alexandria.data.AlexandriaContract;
  */
 public class BookService extends IntentService {
 
-    private final String LOG_TAG = BookService.class.getSimpleName();
-
     public static final String FETCH_BOOK = "it.jaschke.alexandria.services.action.FETCH_BOOK";
     public static final String DELETE_BOOK = "it.jaschke.alexandria.services.action.DELETE_BOOK";
-
     public static final String EAN = "it.jaschke.alexandria.services.extra.EAN";
+    private final String LOG_TAG = BookService.class.getSimpleName();
 
     public BookService() {
         super("Alexandria");
@@ -95,6 +94,7 @@ public class BookService extends IntentService {
         BufferedReader reader = null;
         String bookJsonString = null;
 
+
         try {
             final String FORECAST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?";
             final String QUERY_PARAM = "q";
@@ -128,6 +128,9 @@ public class BookService extends IntentService {
                 return;
             }
             bookJsonString = buffer.toString();
+        } catch (UnknownHostException e) {
+            Log.e(LOG_TAG, "Error ", e);
+
         } catch (Exception e) {
             Log.e(LOG_TAG, "Error ", e);
         } finally {
@@ -198,6 +201,9 @@ public class BookService extends IntentService {
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error ", e);
+        } catch (NullPointerException e) {
+            Log.e(LOG_TAG, "Error ", e);
+
         }
     }
 
