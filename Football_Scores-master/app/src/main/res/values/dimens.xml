@@ -6,5 +6,9 @@
     <dimen name="share_button_margin">150dp</dimen>
     <dimen name="TeamNames">17sp</dimen>
     <dimen name="Score">30sp</dimen>
+    <dimen name="widget_Score">20sp</dimen>
     <dimen name="League">15sp</dimen>
+    <dimen name="widget_today_default_height">220dp</dimen>
+    <dimen name="widget_today_default_width">220dp</dimen>
+
 </resources>
