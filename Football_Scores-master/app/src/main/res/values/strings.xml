@@ -38,5 +38,13 @@
     <string name="format_score" dir="rtl"><xliff:g id="home">%d</xliff:g> - <xliff:g id="away">%d</xliff:g></string>
     <string name="empty_scores_list">No scores available today</string>
     <string name="todays_score_widget_label">Today\'s Scores</string>
+    <string name="share_button_description">Share the score with others</string>
+    <string name="unknown_league">Not known League Please report</string>
+    <string name="scored_no_goal"> scored no goal</string>
+    <string name="scored_one_goal"> scored one goal</string>
+    <string name="scored"> scored </string>
+    <string name="goals"> goals </string>
+    <string name="match_started_at_text">Match started at </string>
+    <string name="match_not_yet_started_text">Match has not yet started. It is scheduled to start at </string>
 
 </resources>
